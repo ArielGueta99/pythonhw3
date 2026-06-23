@@ -201,7 +201,7 @@ class Factory:
                             status += "  !! CRITICAL"
 
                         # Exact formatting string as requested in the assignment tip
-                        line = f"{m._machine_id:<8}| Hours: {m._hours_run:<5}| Produced: {m._units_produced:<5} | Rejected: {m._units_rejected:<4} | Errors: {m._error_count:<3}| Eff: {m._efficiency:.2f}%{status}\n"
+                        line = f"{m._machine_id:<8}| Hours: {m._hours_run:<5}| Produced: {m._units_produced:<6}| Rejected: {m._units_rejected:<5}| Errors: {m._error_count:<3}| Eff: {m._efficiency:.2f}%{status}\n"
                         f.write(line)
                     f.write("\n")
 
