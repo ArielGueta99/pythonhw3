@@ -148,8 +148,8 @@ class Factory:
                         continue
                     self.add_machine(_machine_id=m_id, _type=m_type,_hours_run=hours_run, _units_produced=units_produced,
                                      _units_rejected=units_rejected, _error_count=error_count, seed=seed)
-                print(f"{self.name} loaded successfully.")
-                print(f"Machines loaded: {len(self._machines)} ({self._cutting_machines_number} cutting,"
+                print(f"\n{self.name} loaded successfully.")
+                print(f"Machines loaded: {len(self._machines)} ({self._cutting_machines_number} cutting, "
                       f"{self._assembly_machines_number} assembly, {self._quality_machines_number} quality)")
 
         except FileNotFoundError:
@@ -162,7 +162,6 @@ class Factory:
 
     def generate_report(self):
 
-        print("generate report activated")
         # Section C: Export to text file
         report_filename = "factory_report.txt"
 
@@ -186,49 +185,53 @@ class Factory:
 
         try:
             with open(report_filename, 'w', encoding='utf-8') as f:
-                f.write(f"FACTORY REPORT {self.name}\n")
                 f.write("=" * 60 + "\n")
+                f.write(f"  FACTORY REPORT - {self.name}\n")
+                f.write("=" * 60 + "\n" + "\n")
 
                 # Print Categories
-                categories = [("Cutting Machines", cutting), ("Assembly Machines", assembly),
-                              ("Quality Checkers", quality)]
+                categories = [("--- Cutting Machines ---", cutting), ("--- Assembly Machines ---", assembly),
+                              ("--- Quality Checkers ---", quality)]
 
                 for cat_name, machines in categories:
                     f.write(f"{cat_name}\n")
-                    f.write("-" * 60 + "\n")
                     for m in machines:
                         status = ""
                         if m._error_count >= CRITICAL_ERROR_THRESHOLD:
-                            status += " !! CRITICAL"
+                            status += "  !! CRITICAL"
 
                         # Exact formatting string as requested in the assignment tip
-                        line = f"{m._machine_id:<8} | Hours: {m._hours_run:<5} | Produced: {m._units_produced:<5} | Rejected: {m._units_rejected:<4} | Errors: {m._error_count:<3} | Eff: {m._efficiency:.2f}%{status}\n"
+                        line = f"{m._machine_id:<8}| Hours: {m._hours_run:<5}| Produced: {m._units_produced:<5} | Rejected: {m._units_rejected:<4} | Errors: {m._error_count:<3}| Eff: {m._efficiency:.2f}%{status}\n"
                         f.write(line)
                     f.write("\n")
 
                 # Summary Statistics
-                f.write("SUMMARY STATISTICS (numpy)\n")
-                f.write("-" * 60 + "\n")
-                f.write(f"Average efficiency    : {avg_eff:.2f}%\n")
-                f.write(f"Highest efficiency    : {best_mach._machine_id} ({best_mach._efficiency:.2f}%)\n")
-                f.write(f"Lowest efficiency     : {worst_mach._machine_id} ({worst_mach._efficiency:.2f}%)\n")
-                f.write(f"Total units produced  : {total_produced}\n")
-                f.write(f"Total units rejected  : {total_rejected}\n")
-                f.write(f"Overall rejection%    : {overall_rejection:.2f}%\n")
-                f.write(f"Critical machines     : {len(critical_machines)}\n")
+                f.write("=" * 60 + "\n")
+                f.write(" SUMMARY STATISTICS  (numpy)\n")
+                f.write("=" * 60 + "\n")
+                f.write(f"Average efficiency  : {avg_eff:.2f}%\n")
+                f.write(f"Highest efficiency  : {best_mach._machine_id} ({best_mach._efficiency:.2f}%)\n")
+                f.write(f"Lowest efficiency   : {worst_mach._machine_id} ({worst_mach._efficiency:.2f}%)\n")
+                f.write(f"Total units produced: {total_produced}\n")
+                f.write(f"Total units rejected: {total_rejected}\n")
+                f.write(f"Overall rejection % : {overall_rejection:.2f}%\n")
+                f.write(f"Critical machines   : {len(critical_machines)}")
                 if critical_machines:
-                    f.write(", ".join([m._machine_id for m in critical_machines]) + "\n")
-                f.write(f"Maintenance due       : {len(maintenance_machines)} machines\n\n")
+                    f.write("  →  " +  ", ".join([m._machine_id for m in critical_machines]) + "\n")
+                f.write(f"Maintenance due     : {len(maintenance_machines)} machines\n\n")
 
                 # Rankings
-                f.write("RANKING best to worst efficiency\n")
-                f.write("-" * 60 + "\n")
+                f.write("=" * 60 + "\n")
+                f.write(" RANKING - best to worst efficiency\n")
+                f.write("=" * 60 + "\n")
 
                 # Sort machines by efficiency (descending)
                 ranked_machines = sorted(self._machines, key=lambda x: x._efficiency, reverse=True)
                 for i, m in enumerate(ranked_machines, 1):
-                    critical_flag = " !!" if m._error_count >= CRITICAL_ERROR_THRESHOLD else ""
-                    f.write(f"{i}. {m._machine_id:<8} [{m._type}] {m._efficiency:.2f}%{critical_flag}\n")
+                    critical_flag = "  !!" if m._error_count >= CRITICAL_ERROR_THRESHOLD else ""
+                    f.write(f"{i}. {m._machine_id:<8} [{m._type}]  {m._efficiency:.2f}%{critical_flag}\n")
+
+                f.write("=" * 60 + "\n")
 
             print("Report saved to: factory_report.txt")
         except Exception as e:
