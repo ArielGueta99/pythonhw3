@@ -6,6 +6,31 @@ import matplotlib.pyplot as plt
 CRITICAL_ERROR_THRESHOLD = 5
 MIN_EFFICIENCY = 70.0
 MAINTENANCE_HOURS = 500
+def main():
+
+    while True:
+        factory_name = input("Enter factory name: ")
+        if not factory_name:
+            print("Error: input cannot be empty.")
+            continue
+        else:
+            break
+
+    while True:
+        log_file_name = input("Enter log file name (e.g., factory_log.txt): ")
+        if not log_file_name:
+            print("Error: input cannot be empty.")
+            continue
+        else:
+            factory = Factory(log_file_name, factory_name)
+            factory.read_log_file()
+            for machine in factory._machines:
+                print(machine.__dict__)
+            if factory is None:
+                continue
+            else:
+                break
+
 class Machine:
     def __init__(self, _machine_id , _type , _hours_run , _units_produced , _units_rejected , _error_count , seed):
         self._machine_id = _machine_id
@@ -74,23 +99,52 @@ class QualityChecker(Machine):
         efficiency = self._throughput * 100 - self._error_count * self._error_penalty + self._noise
         return efficiency
 class Factory:
-    def __init__(self,file_path,name):
+    def __init__(self,log_file_name,name):
         self._machines = []
         self.name = name
-        self._report = file_path
+        self.log_file_name = log_file_name
     def add_machine(self,_machine_id , _type , _hours_run , _units_produced , _units_rejected , _error_count , seed):
         if _type == "cutting":
             print("Found a cutting machine")
             self._machines.append(CuttingMachine(_machine_id , _type , _hours_run , _units_produced , _units_rejected , _error_count , seed))
-        if _type == "assembly":
+        elif _type == "assembly":
             print("Found a assembly machine")
             self._machines.append(AssemblyMachine(_machine_id , _type , _hours_run , _units_produced , _units_rejected , _error_count , seed))
-        if _type == "quality":
+        elif _type == "quality":
             print("Found a quality machine")
             self._machines.append(QualityChecker(_machine_id , _type , _hours_run , _units_produced , _units_rejected , _error_count , seed))
-factory = Factory(file_path=0,name="Ariel's factory")
-factory.add_machine(_machine_id=1,_type="cutting",_hours_run=1,_units_produced=3,_units_rejected=1,_error_count=0,seed=3)
-factory.add_machine(_machine_id=2,_type="assembly",_hours_run=1,_units_produced=3,_units_rejected=1,_error_count=0,seed=3)
-factory.add_machine(_machine_id=3 ,_type="quality",_hours_run=1,_units_produced=3,_units_rejected=1,_error_count=0,seed=3)
-for i in factory._machines:
-    print(i.__dict__)
+
+    def read_log_file(self):
+        machines = []
+        try:
+            with open(self.log_file_name) as f:
+
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+
+                    parts = line.split(',')
+
+                    if len(parts) != 7:
+                        continue
+
+                    try:
+                        m_id = parts[0].strip()
+                        m_type = parts[1].strip().lower()
+                        hours_run = float(parts[2].strip())
+                        units_produced = int(parts[3].strip())
+                        units_rejected = int(parts[4].strip())
+                        error_count = int(parts[5].strip())
+                        seed = int(parts[6].strip())
+
+                    except ValueError:
+                        continue
+                    self.add_machine(_machine_id=m_id, _type=m_type,_hours_run=hours_run, _units_produced=units_produced,
+                                     _units_rejected=units_rejected, _error_count=error_count, seed=seed)
+                print(f"{self.name} loaded successfully.")
+
+        except FileNotFoundError:
+            print(f"Error: Cannot find '{self.log_file_name}'. Please check the spelling and try again.")
+            return None
+main()
