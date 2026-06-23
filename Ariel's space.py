@@ -25,9 +25,9 @@ def main():
             factory = Factory(log_file_name, factory_name)
             factory.read_log_file()
             factory.check_for_Critical_machines(CRITICAL_ERROR_THRESHOLD)
-            factory.generate_report()
             factory.plot_efficiency()
-
+            for machine in factory._machines:
+                print(machine.__dict__)
             if factory is None:
                 continue
             else:
@@ -159,81 +159,6 @@ class Factory:
         for machine in self._machines:
             if machine._error_count >= threshold:
                 print(f"Warning: {machine._machine_id} has {machine._error_count} errors - CRITICAL STATUS")
-
-    def generate_report(self):
-
-        print("generate report activated")
-        # Section C: Export to text file
-        report_filename = "factory_report.txt"
-
-        # Helper lists for categories
-        cutting = [m for m in self._machines if m._type == "cutting"]
-        assembly = [m for m in self._machines if m._type == "assembly"]
-        quality = [m for m in self._machines if m._type == "quality"]
-
-        # Statistics using NumPy
-        efficiencies = np.array([m._efficiency for m in self._machines])
-        avg_eff = np.mean(efficiencies)
-        best_mach = self._machines[np.argmax(efficiencies)]
-        worst_mach = self._machines[np.argmin(efficiencies)]
-
-        total_produced = np.sum([m._units_produced for m in self._machines])
-        total_rejected = np.sum([m._units_rejected for m in self._machines])
-        overall_rejection = (total_rejected / total_produced) * 100 if total_produced > 0 else 0
-
-        critical_machines = [m for m in self._machines if m._error_count >= CRITICAL_ERROR_THRESHOLD]
-        maintenance_machines = [m for m in self._machines if m._hours_run >= MAINTENANCE_HOURS]
-
-        try:
-            with open(report_filename, 'w', encoding='utf-8') as f:
-                f.write(f"FACTORY REPORT {self.name}\n")
-                f.write("=" * 60 + "\n")
-
-                # Print Categories
-                categories = [("Cutting Machines", cutting), ("Assembly Machines", assembly),
-                              ("Quality Checkers", quality)]
-
-                for cat_name, machines in categories:
-                    f.write(f"{cat_name}\n")
-                    f.write("-" * 60 + "\n")
-                    for m in machines:
-                        status = ""
-                        if m._error_count >= CRITICAL_ERROR_THRESHOLD:
-                            status += " !! CRITICAL"
-
-                        # Exact formatting string as requested in the assignment tip
-                        line = f"{m._machine_id:<8} | Hours: {m._hours_run:<5} | Produced: {m._units_produced:<5} | Rejected: {m._units_rejected:<4} | Errors: {m._error_count:<3} | Eff: {m._efficiency:.2f}%{status}\n"
-                        f.write(line)
-                    f.write("\n")
-
-                # Summary Statistics
-                f.write("SUMMARY STATISTICS (numpy)\n")
-                f.write("-" * 60 + "\n")
-                f.write(f"Average efficiency    : {avg_eff:.2f}%\n")
-                f.write(f"Highest efficiency    : {best_mach._machine_id} ({best_mach._efficiency:.2f}%)\n")
-                f.write(f"Lowest efficiency     : {worst_mach._machine_id} ({worst_mach._efficiency:.2f}%)\n")
-                f.write(f"Total units produced  : {total_produced}\n")
-                f.write(f"Total units rejected  : {total_rejected}\n")
-                f.write(f"Overall rejection%    : {overall_rejection:.2f}%\n")
-                f.write(f"Critical machines     : {len(critical_machines)}\n")
-                if critical_machines:
-                    f.write(", ".join([m._machine_id for m in critical_machines]) + "\n")
-                f.write(f"Maintenance due       : {len(maintenance_machines)} machines\n\n")
-
-                # Rankings
-                f.write("RANKING best to worst efficiency\n")
-                f.write("-" * 60 + "\n")
-
-                # Sort machines by efficiency (descending)
-                ranked_machines = sorted(self._machines, key=lambda x: x._efficiency, reverse=True)
-                for i, m in enumerate(ranked_machines, 1):
-                    critical_flag = " !!" if m._error_count >= CRITICAL_ERROR_THRESHOLD else ""
-                    f.write(f"{i}. {m._machine_id:<8} [{m._type}] {m._efficiency:.2f}%{critical_flag}\n")
-
-            print("Report saved to: factory_report.txt")
-        except Exception as e:
-            print(f"Error saving report: {e}")
-
     def plot_efficiency(self):
         ids = [m._machine_id for m in self._machines]
         scores = [m._efficiency for m in self._machines]
@@ -242,14 +167,11 @@ class Factory:
 
         plt.figure(figsize=(10, 6))
         plt.bar(ids, scores, color=colors)
-
         plt.axhline(y=MIN_EFFICIENCY, color='red', linestyle='--', label=f'Min threshold ({MIN_EFFICIENCY}%)')
-
         plt.title(f"Machine Efficiency - {self.name}")
         plt.xlabel("Machine ID")
         plt.ylabel("Efficiency Score (%)")
         plt.legend()
-
         plt.savefig('efficiency_chart.png')
         plt.close()
         print("Efficiency chart saved to: efficiency_chart.png")
