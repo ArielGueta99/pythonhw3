@@ -27,12 +27,13 @@ def main():
             continue
         else:
             factory = Factory(log_file_name, factory_name)
-            factory.load_machines(log_file_name)
+            success = factory.load_machines(log_file_name)
 
-            if len(factory.machines) > 0:
-                factory.check_for_critical_machines(CRITICAL_ERROR_THRESHOLD)
-                factory.generate_report()
-                factory.plot_efficiency()
+            if success:
+                if len(factory.machines) > 0:
+                    factory.check_for_critical_machines(CRITICAL_ERROR_THRESHOLD)
+                    factory.generate_report()
+                    factory.plot_efficiency()
                 break
 
             else:
@@ -196,12 +197,17 @@ class Factory:
 
                     self.add_machine(m_id, m_type, hours_run, units_produced, units_rejected, error_count, seed)
 
+            if len(self._machines) == 0:
+                print("Warning: no valid machines loaded.")
+
             print(f"\n{self.name} loaded successfully.")
             print(
                 f"Machines loaded: {len(self._machines)} ({self._cutting_machines_number} cutting, {self._assembly_machines_number} assembly, {self._quality_machines_number} quality)")
+            return True
 
         except FileNotFoundError:
             print(f"Error: Cannot find '{filename}'. Please check the spelling and try again.")
+            return False
 
 
 
