@@ -298,7 +298,7 @@ class Factory:
         colors = ['green' if score >= MIN_EFFICIENCY else 'red' for score in scores]
 
         plt.figure(figsize=(10, 6))
-        plt.bar(ids, scores, color=colors)
+        plt.bar(ids, scores, color=colors,edgecolor='black')
 
         plt.axhline(y=MIN_EFFICIENCY, color='red', linestyle='--', label=f'Min threshold ({MIN_EFFICIENCY}%)')
 
