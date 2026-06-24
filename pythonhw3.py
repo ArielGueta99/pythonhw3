@@ -224,7 +224,7 @@ class Factory:
         assembly = [m for m in self._machines if m.type == "assembly"]
         quality = [m for m in self._machines if m.type == "quality"]
 
-        efficiencies = np.array([m.efficiency for m in self._machines])
+        efficiencies = np.array([round(m.efficiency, 2) for m in self._machines])
         avg_eff = np.mean(efficiencies)
         best_mach = self._machines[np.argmax(efficiencies)]
         worst_mach = self._machines[np.argmin(efficiencies)]
