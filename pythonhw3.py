@@ -20,22 +20,23 @@ def main():
             break
 
     while True:
+
         log_file_name = input("Enter log file name (e.g., factory_log.txt): ")
         if not log_file_name:
             print("Error: input cannot be empty.")
             continue
         else:
-
             factory = Factory(log_file_name, factory_name)
-            factory.read_log_file()
-            factory.check_for_critical_machines(CRITICAL_ERROR_THRESHOLD)
-            factory.generate_report()
-            factory.plot_efficiency()
+            factory.load_machines(log_file_name)
 
-            if factory is None:
-                continue
-            else:
+            if len(factory.machines) > 0:
+                factory.check_for_critical_machines(CRITICAL_ERROR_THRESHOLD)
+                factory.generate_report()
+                factory.plot_efficiency()
                 break
+
+            else:
+                continue
 
 
 class Machine:
@@ -138,76 +139,12 @@ class Factory:
         self._cutting_machines_number = 0
         self._quality_machines_number = 0
         self._assembly_machines_number = 0
+        self._load_warnings = []
 
-    # def load_machines(self, filename):
-    #     warnings = []
-    #
-    #     try:
-    #         with open(filename, 'r', encoding='utf-8') as file:
-    #             for line_num, line in enumerate(file, 1):
-    #                 line = line.strip()
-    #                 if not line:
-    #                     continue
-    #
-    #                 parts = line.split(',')
-    #
-    #                 if len(parts) != 7:
-    #                     warnings.append(f"Warning: line {line_num} has wrong number of fields - skipped.")
-    #                     continue
-    #
-    #                 m_id = parts[0].strip()
-    #                 m_type = parts[1].strip()
-    #
-    #                 if m_type not in ["cutting", "assembly", "quality"]:
-    #                     warnings.append(f"Warning: unknown type '{m_type}' on line {line_num} - skipped.")
-    #                     continue
-    #
-    #                 try:
-    #                     hours = float(parts[2].strip())
-    #                     produced = int(parts[3].strip())
-    #                     rejected = int(parts[4].strip())
-    #                     errors = int(parts[5].strip())
-    #                     seed = int(parts[6].strip())
-    #
-    #                     # Custom validation: A machine cannot reject more units than it produced
-    #                     if rejected > produced:
-    #                         warnings.append(f"Warning: invalid values on line {line_num} - skipped.")
-    #                         continue
-    #
-    #                 except ValueError:
-    #                     warnings.append(f"Warning: invalid values on line {line_num} - skipped.")
-    #                     continue
-    #
-    #                 if m_type == "cutting":
-    #                     mach = CuttingMachine(m_id, hours, produced, rejected, errors, seed)
-    #                 elif m_type == "assembly":
-    #                     mach = AssemblyMachine(m_id, hours, produced, rejected, errors, seed)
-    #                 elif m_type == "quality":
-    #                     mach = QualityChecker(m_id, hours, produced, rejected, errors, seed)
-    #
-    #                 self._machines.append(mach)
-    #
-    #         cutting_count = sum(1 for m in self._machines if m.type == "cutting")
-    #         assembly_count = sum(1 for m in self._machines if m.type == "assembly")
-    #         quality_count = sum(1 for m in self._machines if m.type == "quality")
-    #
-    #         print(f"{self.name} Loaded successfully.")
-    #         print(
-    #             f"Machines Loaded: {len(self._machines)} ({cutting_count} cutting, {assembly_count} assembly, {quality_count} quality)")
-    #
-    #         if warnings:
-    #             print("--- LOAD WARNINGS ---")
-    #             for warning in warnings:
-    #                 print(warning)
-    #             print("=" * 60)
-    #
-    #         # for machine in self._machines:
-    #         #     if machine.is_critical():
-    #         #         print(f"Warning: {machine.machine_id} has {machine.error_count} errors - CRITICAL STATUS")
-    #
-    #     except FileNotFoundError:
-    #         print(f"Error: Cannot find '{self.log_file_name}'. Please check the spelling and try again.")
-    #         return None
+    @property
+    def machines(self):
+        return self._machines
+
 
     def add_machine(self,_machine_id , _type , _hours_run , _units_produced , _units_rejected , _error_count , seed):
         if _type == "cutting":
@@ -220,12 +157,11 @@ class Factory:
             self._quality_machines_number += 1
             self._machines.append(QualityChecker(_machine_id , _type , _hours_run , _units_produced , _units_rejected , _error_count , seed))
 
-    def read_log_file(self):
+    def load_machines(self, filename):
 
         try:
-            with open(self.log_file_name) as f:
-
-                for line in f:
+            with open(filename, 'r', encoding='utf-8') as file:
+                for line_num, line in enumerate(file, 1):
                     line = line.strip()
                     if not line:
                         continue
@@ -233,28 +169,39 @@ class Factory:
                     parts = line.split(',')
 
                     if len(parts) != 7:
+                        self._load_warnings.append(f"Warning: line {line_num} has wrong number of fields - skipped.")
+                        continue
+
+                    m_id = parts[0].strip()
+                    m_type = parts[1].strip().lower()
+
+                    if m_type not in ["cutting", "assembly", "quality"]:
+                        self._load_warnings.append(f"Warning: unknown type '{m_type}' on line {line_num} - skipped.")
                         continue
 
                     try:
-                        m_id = parts[0].strip()
-                        m_type = parts[1].strip().lower()
                         hours_run = float(parts[2].strip())
                         units_produced = int(parts[3].strip())
                         units_rejected = int(parts[4].strip())
                         error_count = int(parts[5].strip())
                         seed = int(parts[6].strip())
 
+                        if units_rejected > units_produced:
+                            self._load_warnings.append(f"Warning: invalid values on line {line_num} - skipped.")
+                            continue
+
                     except ValueError:
+                        self._load_warnings.append(f"Warning: invalid values on line {line_num} - skipped.")
                         continue
-                    self.add_machine(_machine_id=m_id, _type=m_type,_hours_run=hours_run, _units_produced=units_produced,
-                                     _units_rejected=units_rejected, _error_count=error_count, seed=seed)
-                print(f"\n{self.name} loaded successfully.")
-                print(f"Machines loaded: {len(self._machines)} ({self._cutting_machines_number} cutting, "
-                      f"{self._assembly_machines_number} assembly, {self._quality_machines_number} quality)")
+
+                    self.add_machine(m_id, m_type, hours_run, units_produced, units_rejected, error_count, seed)
+
+            print(f"\n{self.name} loaded successfully.")
+            print(
+                f"Machines loaded: {len(self._machines)} ({self._cutting_machines_number} cutting, {self._assembly_machines_number} assembly, {self._quality_machines_number} quality)")
 
         except FileNotFoundError:
-            print(f"Error: Cannot find '{self.log_file_name}'. Please check the spelling and try again.")
-            return None
+            print(f"Error: Cannot find '{filename}'. Please check the spelling and try again.")
 
 
 
@@ -288,6 +235,12 @@ class Factory:
                 f.write("=" * 60 + "\n")
                 f.write(f"  FACTORY REPORT - {self.name}\n")
                 f.write("=" * 60 + "\n" + "\n")
+
+                if self._load_warnings:
+                    f.write("--- LOAD WARNINGS ---\n")
+                    for warning in self._load_warnings:
+                        f.write(warning + "\n")
+                    f.write("=" * 60 + "\n\n")
 
                 categories = [("--- Cutting Machines ---", cutting), ("--- Assembly Machines ---", assembly),
                               ("--- Quality Checkers ---", quality)]
