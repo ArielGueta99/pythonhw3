@@ -193,8 +193,16 @@ class Factory:
                         error_count = int(parts[5].strip())
                         seed = int(parts[6].strip())
 
+                        if hours_run < 0 or units_produced < 0 or units_rejected < 0 or error_count < 0:
+                            self._load_warnings.append(f"Warning: negative values on line {line_num} - skipped.")
+                            continue
+
                         if units_rejected > units_produced:
                             self._load_warnings.append(f"Warning: units_rejected exceeds units_produced on line {line_num} - skipped.")
+                            continue
+
+                        if hours_run == 0:
+                            self._load_warnings.append(f"Warning: hours_run is zero on line {line_num} - skipped.")
                             continue
 
                     except ValueError:
