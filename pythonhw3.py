@@ -188,7 +188,7 @@ class Factory:
                         seed = int(parts[6].strip())
 
                         if units_rejected > units_produced:
-                            self._load_warnings.append(f"Warning: invalid values on line {line_num} - skipped.")
+                            self._load_warnings.append(f"Warning: units_rejected exceeds units_produced on line {line_num} - skipped.")
                             continue
 
                     except ValueError:
@@ -252,15 +252,16 @@ class Factory:
                               ("--- Quality Checkers ---", quality)]
 
                 for cat_name, machines in categories:
-                    f.write(f"{cat_name}\n")
-                    for m in machines:
-                        status = ""
-                        if m.error_count >= CRITICAL_ERROR_THRESHOLD:
-                            status += "  !! CRITICAL"
+                    if len(machines) > 0:
+                        f.write(f"{cat_name}\n")
+                        for m in machines:
+                            status = ""
+                            if m.error_count >= CRITICAL_ERROR_THRESHOLD:
+                                status += "  !! CRITICAL"
 
-                        line = f"{m.machine_id:<8}| Hours: {m.hours_run:<5}| Produced: {m.units_produced:<6}| Rejected: {m.units_rejected:<5}| Errors: {m.error_count:<3}| Eff: {m.efficiency:.2f}%{status}\n"
-                        f.write(line)
-                    f.write("\n")
+                            line = f"{m.machine_id:<8}| Hours: {m.hours_run:<5}| Produced: {m.units_produced:<6}| Rejected: {m.units_rejected:<5}| Errors: {m.error_count:<3}| Eff: {m.efficiency:.2f}%{status}\n"
+                            f.write(line)
+                        f.write("\n")
 
                 f.write("=" * 60 + "\n")
                 f.write(" SUMMARY STATISTICS  (numpy)\n")
@@ -273,8 +274,8 @@ class Factory:
                 f.write(f"Overall rejection % : {overall_rejection:.2f}%\n")
                 f.write(f"Critical machines   : {len(critical_machines)}")
                 if critical_machines:
-                    f.write("  →  " +  ", ".join([m.machine_id for m in critical_machines]) + "\n")
-                f.write(f"Maintenance due     : {len(maintenance_machines)} machines\n\n")
+                    f.write("  →  " +  ", ".join([m.machine_id for m in critical_machines]))
+                f.write(f"\nMaintenance due     : {len(maintenance_machines)} machines\n\n")
 
                 f.write("=" * 60 + "\n")
                 f.write(" RANKING - best to worst efficiency\n")

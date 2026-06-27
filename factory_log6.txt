@@ -1,0 +1,9 @@
+CUT-99, cutting, 10.0, 500, 5, 0, 111
+
+ASM-99, assembly, 8.0, 200, 5
+QC-99, quality, 8.0, 600, 0, 1, 222, extra_data
+CUT-98, cuting, 8.0, 400, 10, 1, 333
+ASM-98, assembly, five, 300, 10, 2, 444
+QC-98, quality, 7.0, 100, 500, 0, 555
+This is just a completely random corrupted line
+QC-97, quality, 8.0, 450, 0, 1, 666
