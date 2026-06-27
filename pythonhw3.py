@@ -51,6 +51,8 @@ class Machine:
         self._rng = random.Random(seed) #to put in spec class
         self._quality = self.calc_quality()
     def calc_quality(self):
+        if self._units_produced == 0:
+            return 0.0
         quality = (self._units_produced - self._units_rejected) / self._units_produced
         return quality
 
@@ -89,6 +91,8 @@ class CuttingMachine(Machine):
         _noise = self._rng.uniform(-2.0, 2.0)
         return _noise
     def calc_speed(self):
+        if self._hours_run == 0 or self._units_produced == 0:
+            return 0.0
         speed = min(self._units_produced / (self._hours_run * self._speed_target),1.0)
         return speed
 
@@ -124,6 +128,8 @@ class QualityChecker(Machine):
         return noise
 
     def calc_throughput(self):
+        if self._hours_run == 0 or self._scan_target == 0:
+            return 0.0
         throughput = min(self._units_produced / (self._hours_run * self._scan_target),1.0)
         return throughput
 

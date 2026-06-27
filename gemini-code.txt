@@ -1,0 +1,10 @@
+CUT-01,cutting,10.0,500,50,0,101
+ASM-01,assembly,10.0,200,20,0,202
+QC-01,quality,10.0,800,0,0,303
+ASM-02,assembly,500.0,100,5,5,404
+ASM-03,assembly,2.0,100,10,7,505
+CUT-02,cutting,8.0,300
+CUT-03,cutting,abc,300,10,1,606
+QC-02,quality,5.0,100,200,0,707
+
+CUT-04,cutting,0.0,0,0,0,808
