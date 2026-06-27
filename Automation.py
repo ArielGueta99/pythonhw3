@@ -151,7 +151,7 @@ def run_from_terminal(test_number, name, log_file):
         )
     print("=" * 62)
 
-for i in range(6):
+for i in range(7):
     if i>=1:
         run_from_terminal(i, "ariel", f"factory_log{i}.txt")
-run_from_terminal(7,"Gemini","gemini-code.txt")
+run_from_terminal(8,"Gemini","gemini-code.txt")

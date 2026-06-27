@@ -1,42 +1,69 @@
 ============================================================
-  FACTORY REPORT - Gemini
+  FACTORY REPORT - ariel
 ============================================================
 
 --- LOAD WARNINGS ---
-Warning: line 6 has wrong number of fields - skipped.
-Warning: invalid values on line 7 - skipped.
-Warning: units_rejected exceeds units_produced on line 8 - skipped.
+Warning: hours_run is zero on line 3 - skipped.
+Warning: negative values on line 4 - skipped.
+Warning: negative values on line 5 - skipped.
+Warning: negative values on line 6 - skipped.
+Warning: negative values on line 7 - skipped.
+Warning: invalid values on line 8 - skipped.
+Warning: invalid values on line 9 - skipped.
+Warning: invalid values on line 10 - skipped.
+Warning: units_rejected exceeds units_produced on line 11 - skipped.
+Warning: unknown type 'cutter' on line 12 - skipped.
+Warning: invalid values on line 17 - skipped.
+Warning: invalid values on line 18 - skipped.
+Warning: invalid values on line 25 - skipped.
+Warning: line 26 has wrong number of fields - skipped.
+Warning: line 27 has wrong number of fields - skipped.
+Warning: line 28 has wrong number of fields - skipped.
 ============================================================
 
 --- Cutting Machines ---
-CUT-01  | Hours: 10.0 | Produced: 500   | Rejected: 50   | Errors: 0  | Eff: 88.32%
+CUT-OK-01| Hours: 8.0  | Produced: 480   | Rejected: 24   | Errors: 0  | Eff: 97.81%
+CUT-ZERO-PROD| Hours: 8.0  | Produced: 0     | Rejected: 0    | Errors: 0  | Eff: 0.00%
 
 --- Assembly Machines ---
-ASM-01  | Hours: 10.0 | Produced: 200   | Rejected: 20   | Errors: 0  | Eff: 90.79%
-ASM-02  | Hours: 500.0| Produced: 100   | Rejected: 5    | Errors: 5  | Eff: 78.76%  !! CRITICAL
-ASM-03  | Hours: 2.0  | Produced: 100   | Rejected: 10   | Errors: 7  | Eff: 67.95%  !! CRITICAL
+ASM-VALID-CRIT| Hours: 501.0| Produced: 200   | Rejected: 20   | Errors: 5  | Eff: 73.66%  !! CRITICAL
+ASM-HIGH-ERR| Hours: 7.5  | Produced: 200   | Rejected: 10   | Errors: 9  | Eff: 69.38%  !! CRITICAL
+ASM-LOW-EFF| Hours: 8.0  | Produced: 100   | Rejected: 99   | Errors: 0  | Eff: 2.20%
+ASM-FRACTION-HOURS| Hours: 7.75 | Produced: 300   | Rejected: 0    | Errors: 1  | Eff: 97.22%
 
 --- Quality Checkers ---
-QC-01   | Hours: 10.0 | Produced: 800   | Rejected: 0    | Errors: 0  | Eff: 99.06%
+QC-VALID-01| Hours: 8.0  | Produced: 640   | Rejected: 0    | Errors: 0  | Eff: 100.17%
+QC-MAINT| Hours: 500.0| Produced: 300   | Rejected: 0    | Errors: 0  | Eff: 0.79%
+QC-CRIT-MAINT| Hours: 600.0| Produced: 300   | Rejected: 0    | Errors: 5  | Eff: 0.00%  !! CRITICAL
+QC-REJ-NONZERO| Hours: 8.0  | Produced: 640   | Rejected: 10   | Errors: 0  | Eff: 99.82%
+QC-SPACES| Hours: 8.0  | Produced: 640   | Rejected: 0    | Errors: 0  | Eff: 99.99%
+QC-UPPER| Hours: 8.0  | Produced: 640   | Rejected: 0    | Errors: 0  | Eff: 99.97%
 
 ============================================================
  SUMMARY STATISTICS  (numpy)
 ============================================================
-Average efficiency  : 84.98%
-Highest efficiency  : QC-01 (99.06%)
-Lowest efficiency   : ASM-03 (67.95%)
-Total units produced: 1700
-Total units rejected: 85
-Overall rejection % : 5.0%
-Critical machines   : 2  →  ASM-02, ASM-03
-Maintenance due     : 1 machines
+Average efficiency  : 61.75%
+Highest efficiency  : QC-VALID-01 (100.17%)
+Lowest efficiency   : CUT-ZERO-PROD (0.00%)
+Total units produced: 4440
+Total units rejected: 163
+Overall rejection % : 3.67%
+Critical machines   : 3  →  ASM-VALID-CRIT, ASM-HIGH-ERR, QC-CRIT-MAINT
+Maintenance due     : 3 machines
 
 ============================================================
  RANKING - best to worst efficiency
 ============================================================
-1. QC-01    [quality]  99.06%
-2. ASM-01   [assembly]  90.79%
-3. CUT-01   [cutting]  88.32%
-4. ASM-02   [assembly]  78.76%  !!
-5. ASM-03   [assembly]  67.95%  !!
+1. QC-VALID-01 [quality]  100.17%
+2. QC-SPACES [quality]  99.99%
+3. QC-UPPER [quality]  99.97%
+4. QC-REJ-NONZERO [quality]  99.82%
+5. CUT-OK-01 [cutting]  97.81%
+6. ASM-FRACTION-HOURS [assembly]  97.22%
+7. ASM-VALID-CRIT [assembly]  73.66%  !!
+8. ASM-HIGH-ERR [assembly]  69.38%  !!
+9. ASM-LOW-EFF [assembly]  2.20%
+10. QC-MAINT [quality]  0.79%
+11. CUT-ZERO-PROD [cutting]  0.00%
+12. QC-CRIT-MAINT [quality]  0.00%  !!
 ============================================================

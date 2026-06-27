@@ -98,6 +98,8 @@ class CuttingMachine(Machine):
 
     def calc_efficiency(self):
         efficiency = (0.7 * self._quality + 0.3 * self._speed) * 100 + self._noise
+        if efficiency < 0:
+            efficiency= 0.0
         return efficiency
 
 class AssemblyMachine(Machine):
@@ -112,6 +114,8 @@ class AssemblyMachine(Machine):
         return _noise
     def calc_efficiency(self):
         efficiency = self._quality * 100 - self._error_count * self._error_penalty + self._noise
+        if efficiency < 0:
+            efficiency = 0.0
         return efficiency
 
 class QualityChecker(Machine):
@@ -135,6 +139,8 @@ class QualityChecker(Machine):
 
     def calc_efficiency(self):
         efficiency = self._throughput * 100 - self._error_count * self._error_penalty + self._noise
+        if efficiency < 0:
+            efficiency = 0.0
         return efficiency
 
 class Factory:
