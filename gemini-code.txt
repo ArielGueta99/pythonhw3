@@ -7,4 +7,3 @@ CUT-02,cutting,8.0,300
 CUT-03,cutting,abc,300,10,1,606
 QC-02,quality,5.0,100,200,0,707
 
-CUT-04,cutting,0.0,0,0,0,808

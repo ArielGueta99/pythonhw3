@@ -10,7 +10,6 @@ Warning: units_rejected exceeds units_produced on line 8 - skipped.
 
 --- Cutting Machines ---
 CUT-01  | Hours: 10.0 | Produced: 500   | Rejected: 50   | Errors: 0  | Eff: 88.32%
-CUT-04  | Hours: 0.0  | Produced: 0     | Rejected: 0    | Errors: 0  | Eff: -0.54%
 
 --- Assembly Machines ---
 ASM-01  | Hours: 10.0 | Produced: 200   | Rejected: 20   | Errors: 0  | Eff: 90.79%
@@ -23,12 +22,12 @@ QC-01   | Hours: 10.0 | Produced: 800   | Rejected: 0    | Errors: 0  | Eff: 99.
 ============================================================
  SUMMARY STATISTICS  (numpy)
 ============================================================
-Average efficiency  : 70.72%
+Average efficiency  : 84.98%
 Highest efficiency  : QC-01 (99.06%)
-Lowest efficiency   : CUT-04 (-0.54%)
+Lowest efficiency   : ASM-03 (67.95%)
 Total units produced: 1700
 Total units rejected: 85
-Overall rejection % : 5.00%
+Overall rejection % : 5.0%
 Critical machines   : 2  →  ASM-02, ASM-03
 Maintenance due     : 1 machines
 
@@ -40,5 +39,4 @@ Maintenance due     : 1 machines
 3. CUT-01   [cutting]  88.32%
 4. ASM-02   [assembly]  78.76%  !!
 5. ASM-03   [assembly]  67.95%  !!
-6. CUT-04   [cutting]  -0.54%
 ============================================================

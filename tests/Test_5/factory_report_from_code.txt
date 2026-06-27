@@ -1,0 +1,24 @@
+============================================================
+  FACTORY REPORT - ariel
+============================================================
+
+--- Cutting Machines ---
+CUT-01  | Hours: 520.0| Produced: 430   | Rejected: 12   | Errors: 1  | Eff: 68.78%
+
+============================================================
+ SUMMARY STATISTICS  (numpy)
+============================================================
+Average efficiency  : 68.78%
+Highest efficiency  : CUT-01 (68.78%)
+Lowest efficiency   : CUT-01 (68.78%)
+Total units produced: 430
+Total units rejected: 12
+Overall rejection % : 2.79%
+Critical machines   : 0
+Maintenance due     : 1 machines
+
+============================================================
+ RANKING - best to worst efficiency
+============================================================
+1. CUT-01   [cutting]  68.78%
+============================================================

@@ -277,7 +277,11 @@ class Factory:
                 f.write(f"Lowest efficiency   : {worst_mach.machine_id} ({worst_mach.efficiency:.2f}%)\n")
                 f.write(f"Total units produced: {total_produced}\n")
                 f.write(f"Total units rejected: {total_rejected}\n")
-                f.write(f"Overall rejection % : {overall_rejection:.2f}%\n")
+                if overall_rejection % 1 == 0:
+                    formatted_rejection = f"{int(overall_rejection)}.0"
+                else:
+                    formatted_rejection = f"{overall_rejection:.2f}"
+                f.write(f"Overall rejection % : {formatted_rejection}%\n")
                 f.write(f"Critical machines   : {len(critical_machines)}")
                 if critical_machines:
                     f.write("  →  " +  ", ".join([m.machine_id for m in critical_machines]))
